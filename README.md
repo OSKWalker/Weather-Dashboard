@@ -28,4 +28,4 @@ The objective of this exercise is to ...
 
 # Link to Deployed Application
 
-https://oskwalker.github.io//
+https://oskwalker.github.io/Weather-Dashboard/
