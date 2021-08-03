@@ -1,0 +1,133 @@
+.align-items-center h1 {
+  color: #fff;
+}
+
+.btn {
+  color: #fff;
+  font-weight: bolder;
+}
+.b-example-divider {
+  height: 3rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  border: solid rgba(0, 0, 0, 0.15);
+  border-width: 1px 0;
+  box-shadow: inset 0 0.5em 1.5em rgba(0, 0, 0, 0.1),
+    inset 0 0.125em 0.5em rgba(0, 0, 0, 0.15);
+}
+
+.form-control-dark {
+  color: #fff;
+  background-color: var(--bs-dark);
+  border-color: var(--bs-gray);
+}
+.form-control-dark:focus {
+  color: #fff;
+  background-color: var(--bs-dark);
+  border-color: #fff;
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+}
+
+.bi {
+  vertical-align: -0.125em;
+  fill: currentColor;
+}
+
+.text-small {
+  font-size: 85%;
+}
+
+.dropdown-toggle {
+  outline: 0;
+}
+
+h1 {
+  text-align: center;
+}
+
+.city-weather-today h1 {
+  text-align: left !important;
+  line-height: 10pt;
+  padding: 10px;
+}
+
+.city-weather-today {
+  text-align: left !important;
+  line-height: 25pt;
+  padding: 10px;
+  font-size: 18px;
+}
+
+.gap-2 {
+  padding: 5px;
+}
+
+.card {
+  /*flex: 1 0 0;*/
+  padding: 5px;
+  /*text-align: center;*/
+  border-style: solid;
+  border-width: 1px;
+  width: 200px;
+  background-color: #3256a8;
+  color: #fff;
+  margin-right: 10px;
+}
+
+.card header {
+  padding: 20px;
+  background: #13293d;
+  color: #fff;
+}
+
+.card img {
+  width: 35%;
+  /* min-width: 100px;*/
+}
+
+.city-weather-future {
+  display: inline-flex;
+  padding: 5px;
+}
+
+.header {
+  background-color: #3256a8;
+}
+
+#search-header h2 {
+  display: inline-block;
+}
+
+#search-header a {
+  color: darkgrey;
+  font-style: italic;
+}
+
+#low {
+  background-color: green;
+  color: #fff;
+  font-weight: bold;
+}
+
+#mod {
+  background-color: yellow;
+  color: #fff;
+  font-weight: bold;
+}
+
+#high {
+  background-color: orange;
+  color: #fff;
+  font-weight: bold;
+}
+
+#very-high {
+  background-color: red;
+  color: #fff;
+  font-weight: bold;
+}
+
+#extreme {
+  background-color: purple;
+  color: #fff;
+  font-weight: bold;
+}
