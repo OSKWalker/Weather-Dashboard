@@ -1,6 +1,6 @@
-let apiURL =
-  "https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid=d33c2ae08fb898222095f60271a74087";
-
+// "/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid=";
+const apiURL = "https://api.openweathermap.org/";
+const appID = "d33c2ae08fb898222095f60271a74087";
 const searchHistoryEl = document.getElementById("searchHistory");
 const searchInputEl = document.getElementById("searchInput");
 const searchButtonEl = document.getElementById("searchButton");
@@ -28,7 +28,24 @@ function updateContentPane(event) {
 function getLocation(event) {
   event.preventDefault();
   let location = searchInputEl.nodeValue;
-  window.alert(location);
+  let URL = `${apiURL}/data/2.5/find?q=${location}&appid=${appID}`;
+  fetch(URL)
+    .then(function (response) {
+      if (!response.ok) {
+        console.log(response.status);
+      }
+
+      response.json();
+    })
+    .then(function (data) {
+      console.log("data", data);
+      if (data.count === 0) {
+        window.alert("This is not a valid location!");
+      }
+    })
+    .catch(function () {
+      window.alert("Something went wrong!");
+    });
 }
 
 function setEventListeners() {
