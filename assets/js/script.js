@@ -4,6 +4,7 @@ const appID = "d33c2ae08fb898222095f60271a74087";
 const searchHistoryEl = document.getElementById("searchHistory");
 const searchInputEl = document.getElementById("searchInput");
 const searchButtonEl = document.getElementById("searchButton");
+const locationHistory = [];
 
 function displaySavedLocations() {
   let locations = localStorage.getItem("recentSearches");
@@ -12,12 +13,20 @@ function displaySavedLocations() {
   } else {
     let parsedLocations = JSON.parse(locations);
     parsedLocations.forEach(function (item) {
-      let listItem = document.createElement("li");
-      let content = `<button data-location="${item}">${item}</button>`;
-      listItem.innerHTML = content;
-      searchHistoryEl.appendChild(listItem);
+      createLocationButton(item, parsedLocations);
     });
   }
+}
+
+function createLocationButton(location, parsedLocations) {
+  let duplicateLocation = parsedLocations.some(function (loc) {
+    return loc.toLowerCase() === location.toLowerCase();
+  });
+  let listItem = document.createElement("li");
+  let content = `<button data-location="${location}">${location}</button>`;
+  listItem.innerHTML = content;
+  searchHistoryEl.appendChild(listItem);
+  locationHistory.push(item.toLowerCase());
 }
 
 function updateContentPane(event) {
@@ -25,6 +34,34 @@ function updateContentPane(event) {
   const buttonClicked = event.target;
   let location = buttonClicked.getAttribute("data-location");
 }
+
+function setLocalstorage(location) {
+  let locations = localStorage.getItem("recentSearches");
+  let parsedLocations = [];
+  if (locations == null) {
+    return;
+  } else {
+    parsedLocations = JSON.parse(locations);
+  }
+  let duplicateLocation = parsedLocations.some(function (loc) {
+    return loc.toLowerCase() === location.toLowerCase();
+  });
+
+  if (!duplicateLocation) {
+    parsedLocations.push(location);
+  }
+  localStorage.setItem("recentSearches", JSON.stringify(parsedLocations));
+}
+
+function handleGoodFetch(data, location) {
+  // add button to searchHistoryEl
+  createLocationButton(location);
+  // add to local storage
+  setLocalstorage(location);
+  // update the main content area
+  // fetch 5-day forecast
+}
+
 function getLocation(event) {
   event.preventDefault();
   let location = searchInputEl.nodeValue;
@@ -42,6 +79,7 @@ function getLocation(event) {
       if (data.count === 0) {
         window.alert("This is not a valid location!");
       }
+      handleGoodFetch(data, location);
     })
     .catch(function () {
       window.alert("Something went wrong!");
