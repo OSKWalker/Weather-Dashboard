@@ -64,8 +64,9 @@ function handleGoodFetch(data, location) {
 
 function getLocation(event) {
   event.preventDefault();
-  let location = searchInputEl.nodeValue;
-  let URL = `${apiURL}/data/2.5/find?q=${location}&appid=${appID}`;
+  let location = searchInputEl.value;
+  let URL = `${apiURL}data/2.5/find?q=${location}&appid=${appID}`;
+  console.log(URL);
   fetch(URL)
     .then(function (response) {
       if (!response.ok) {
@@ -92,8 +93,8 @@ function setEventListeners() {
 }
 
 function init() {
-  setEventListeners();
   displaySavedLocations();
+  setEventListeners();
 }
 
 init();
