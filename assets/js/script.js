@@ -46,7 +46,7 @@ function setLocalstorage(location) {
   let duplicateLocation = parsedLocations.some(function (loc) {
     return loc.toLowerCase() === location.toLowerCase();
   });
-
+  console.log(parsedLocations);
   if (!duplicateLocation) {
     parsedLocations.push(location);
   }
@@ -54,10 +54,9 @@ function setLocalstorage(location) {
 }
 
 function handleGoodFetch(data, location) {
-  // add button to searchHistoryEl
-  createLocationButton(location);
-  // add to local storage
   setLocalstorage(location);
+  createLocationButton(location);
+
   // update the main content area
   // fetch 5-day forecast
 }
@@ -65,6 +64,7 @@ function handleGoodFetch(data, location) {
 function getLocation(event) {
   event.preventDefault();
   let location = searchInputEl.value;
+  console.log(location);
   let URL = `${apiURL}data/2.5/find?q=${location}&appid=${appID}`;
   console.log(URL);
   fetch(URL)
@@ -72,8 +72,7 @@ function getLocation(event) {
       if (!response.ok) {
         console.log(response.status);
       }
-
-      response.json();
+      return response.json();
     })
     .then(function (data) {
       console.log("data", data);
@@ -81,20 +80,20 @@ function getLocation(event) {
         window.alert("This is not a valid location!");
       }
       handleGoodFetch(data, location);
-    })
+    }); /*
     .catch(function () {
       window.alert("Something went wrong!");
-    });
+    });*/
 }
 
 function setEventListeners() {
-  searchHistoryEl.addEventListener("click", updateContentPane());
-  searchButtonEl.addEventListener("click", getLocation());
+  searchButtonEl.addEventListener("click", getLocation);
+  searchHistoryEl.addEventListener("click", updateContentPane);
 }
 
 function init() {
-  displaySavedLocations();
   setEventListeners();
+  displaySavedLocations();
 }
 
 init();
