@@ -5,6 +5,7 @@ const searchHistoryEl = document.getElementById("searchHistory");
 const searchInputEl = document.getElementById("searchInput");
 const searchButtonEl = document.getElementById("searchButton");
 const locationHistory = [];
+let recentSearches = [];
 
 function displaySavedLocations() {
   let locations = localStorage.getItem("recentSearches");
@@ -36,21 +37,11 @@ function updateContentPane(event) {
 }
 
 function setLocalstorage(location) {
-  let locations = localStorage.getItem("recentSearches");
-  let parsedLocations = [];
-  if (locations == null) {
-    return;
-  } else {
-    parsedLocations = JSON.parse(locations);
-  }
-  let duplicateLocation = parsedLocations.some(function (loc) {
-    return loc.toLowerCase() === location.toLowerCase();
-  });
-  console.log(parsedLocations);
-  if (!duplicateLocation) {
-    parsedLocations.push(location);
-  }
-  localStorage.setItem("recentSearches", JSON.stringify(parsedLocations));
+  locationHistory.push(location.toLowerCase());
+  console.log(locationHistory);
+  recentSearches = [...new Set(locationHistory)];
+  console.log(recentSearches);
+  localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
 }
 
 function handleGoodFetch(data, location) {
@@ -64,8 +55,12 @@ function handleGoodFetch(data, location) {
 function getLocation(event) {
   event.preventDefault();
   let location = searchInputEl.value;
-  console.log(location);
-  let URL = `${apiURL}data/2.5/find?q=${location}&appid=${appID}`;
+  let URL;
+  if (location === "") {
+    return;
+  } else {
+    URL = `${apiURL}data/2.5/find?q=${location}&appid=${appID}`;
+  }
   console.log(URL);
   fetch(URL)
     .then(function (response) {
@@ -75,7 +70,6 @@ function getLocation(event) {
       return response.json();
     })
     .then(function (data) {
-      console.log("data", data);
       if (data.count === 0) {
         window.alert("This is not a valid location!");
       }
@@ -92,8 +86,8 @@ function setEventListeners() {
 }
 
 function init() {
-  setEventListeners();
-  displaySavedLocations();
+  setEventListeners(); /*
+  displaySavedLocations();*/
 }
 
 init();
