@@ -4,30 +4,38 @@ const appID = "d33c2ae08fb898222095f60271a74087";
 const searchHistoryEl = document.getElementById("searchHistory");
 const searchInputEl = document.getElementById("searchInput");
 const searchButtonEl = document.getElementById("searchButton");
-const locationHistory = [];
+const locationHistory = JSON.parse(localStorage.getItem("recentSearches"));
+let locationSearch = [];
 let recentSearches = [];
 
 function displaySavedLocations() {
-  let locations = localStorage.getItem("recentSearches");
-  if (locations == null) {
-    return;
-  } else {
-    let parsedLocations = JSON.parse(locations);
-    parsedLocations.forEach(function (item) {
-      createLocationButton(item, parsedLocations);
-    });
-  }
+  recentSearches.forEach((element) => {
+    let listItem = document.createElement("li");
+    let content = `<button data-location="${element}">${element}</button>`;
+    listItem.innerHTML = content;
+    searchHistoryEl.appendChild(listItem);
+  });
 }
 
-function createLocationButton(location, parsedLocations) {
-  let duplicateLocation = parsedLocations.some(function (loc) {
-    return loc.toLowerCase() === location.toLowerCase();
-  });
-  let listItem = document.createElement("li");
-  let content = `<button data-location="${location}">${location}</button>`;
-  listItem.innerHTML = content;
-  searchHistoryEl.appendChild(listItem);
-  locationHistory.push(item.toLowerCase());
+function createLocationButton(location) {
+  let duplicateLocation = function checkForDuplicate(recentSearches, location) {
+    return recentSearches.some(function (loc) {
+      return location.toLowerCase() === loc.toLowerCase();
+    });
+  };
+
+  console.log("duplicateLoc", duplicateLocation(recentSearches, location));
+  if (!duplicateLocation(recentSearches, location)) {
+    let listItem = document.createElement("li");
+    let content = `<button data-location="${location}">${location}</button>`;
+    let locationNameArray = content.innerHTML.split();
+    console.log(locationNameArray);
+    listItem.innerHTML = content;
+    searchHistoryEl.appendChild(listItem);
+  } else {
+    console.log("working");
+    return;
+  }
 }
 
 function updateContentPane(event) {
@@ -37,16 +45,16 @@ function updateContentPane(event) {
 }
 
 function setLocalstorage(location) {
-  locationHistory.push(location.toLowerCase());
-  console.log(locationHistory);
-  recentSearches = [...new Set(locationHistory)];
-  console.log(recentSearches);
+  locationSearch.push(location.toLowerCase());
+  console.log("locationSearch", locationSearch);
+  recentSearches = [...new Set(locationSearch)];
+  console.log("recentSearches", recentSearches);
   localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
 }
 
 function handleGoodFetch(data, location) {
-  setLocalstorage(location);
   createLocationButton(location);
+  setLocalstorage(location);
 
   // update the main content area
   // fetch 5-day forecast
@@ -54,7 +62,7 @@ function handleGoodFetch(data, location) {
 
 function getLocation(event) {
   event.preventDefault();
-  let location = searchInputEl.value;
+  let location = searchInputEl.value.toLowerCase();
   let URL;
   if (location === "") {
     return;
@@ -72,8 +80,10 @@ function getLocation(event) {
     .then(function (data) {
       if (data.count === 0) {
         window.alert("This is not a valid location!");
+        return;
+      } else {
+        handleGoodFetch(data, location);
       }
-      handleGoodFetch(data, location);
     }); /*
     .catch(function () {
       window.alert("Something went wrong!");
