@@ -23,17 +23,14 @@ function createLocationButton(location) {
       return location.toLowerCase() === loc.toLowerCase();
     });
   };
-
-  console.log("duplicateLoc", duplicateLocation(recentSearches, location));
   if (!duplicateLocation(recentSearches, location)) {
     let listItem = document.createElement("li");
-    let content = `<button data-location="${location}">${location}</button>`;
-    let locationNameArray = content.innerHTML.split();
-    console.log(locationNameArray);
+    let content = `<button data-location="${location}">${
+      location[0].toUpperCase() + location.substring(1)
+    }</button>`;
     listItem.innerHTML = content;
     searchHistoryEl.appendChild(listItem);
   } else {
-    console.log("working");
     return;
   }
 }
@@ -46,9 +43,7 @@ function updateContentPane(event) {
 
 function setLocalstorage(location) {
   locationSearch.push(location.toLowerCase());
-  console.log("locationSearch", locationSearch);
   recentSearches = [...new Set(locationSearch)];
-  console.log("recentSearches", recentSearches);
   localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
 }
 
@@ -63,14 +58,13 @@ function handleGoodFetch(data, location) {
 function getLocation(event) {
   event.preventDefault();
   let location = searchInputEl.value.toLowerCase();
-  let URL;
+  let searchURL;
   if (location === "") {
     return;
   } else {
-    URL = `${apiURL}data/2.5/find?q=${location}&appid=${appID}`;
+    searchURL = `${apiURL}data/2.5/find?q=${location}&appid=${appID}`;
   }
-  console.log(URL);
-  fetch(URL)
+  fetch(searchURL)
     .then(function (response) {
       if (!response.ok) {
         console.log(response.status);
