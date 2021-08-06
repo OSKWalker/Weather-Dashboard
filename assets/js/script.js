@@ -4,16 +4,14 @@ const appID = "d33c2ae08fb898222095f60271a74087";
 const searchHistoryEl = document.getElementById("searchHistory");
 const searchInputEl = document.getElementById("searchInput");
 const searchButtonEl = document.getElementById("searchButton");
+const clearButtonEl = document.getElementById("clearButton");
 const locationHistory = JSON.parse(localStorage.getItem("recentSearches"));
 let locationSearch = [];
 let recentSearches = [];
 
 function displaySavedLocations() {
-  recentSearches.forEach((element) => {
-    let listItem = document.createElement("li");
-    let content = `<button data-location="${element}">${element}</button>`;
-    listItem.innerHTML = content;
-    searchHistoryEl.appendChild(listItem);
+  locationHistory.forEach((element) => {
+    createLocationButton(element);
   });
 }
 
@@ -84,14 +82,20 @@ function getLocation(event) {
     });*/
 }
 
+function clearLocations() {
+  localStorage.clear();
+}
 function setEventListeners() {
   searchButtonEl.addEventListener("click", getLocation);
+  clearButtonEl.addEventListener("click", clearLocations);
   searchHistoryEl.addEventListener("click", updateContentPane);
 }
 
 function init() {
-  setEventListeners(); /*
-  displaySavedLocations();*/
+  setEventListeners();
+  if (locationHistory !== null) {
+    displaySavedLocations();
+  }
 }
 
 init();
