@@ -39,7 +39,7 @@
         <h1 class="">Weather Dashboard</h1>
       </div>
     </header>
-    <div class="container-fluid bg-dark text-light" style="max-width: 1400px">
+    <div id="mainContainer" class="container-fluid bg-dark text-light">
       <div class="row">
         <aside class="col-lg-3 pb-3">
           <h1 id="form-heading" class="mt-1 h3 form-label">
@@ -94,18 +94,25 @@
           >
             <div class="card">
               <div class="card-body">
-                <h2 class="h3 card-title">
+                <h2 id="locationName" class="h3 card-title">
                   Foo (7/30/2021)<img
                     src="https://openweathermap.org/img/w/04n.png"
                     alt="broken clouds"
                     class="weather-img"
                   />
                 </h2>
-                <p class="card-text">Temp: 58.17°F</p>
-                <p class="card-text">Wind: 3.44 MPH</p>
-                <p class="card-text">Humidity: 100%</p>
+                <p class="card-text">
+                  Temp: <span id="currentTemp">58.17°F</span>
+                </p>
+                <p class="card-text">
+                  Wind: <span id="currentWindSpeed">3.44 MPH</span>
+                </p>
+                <p class="card-text">
+                  Humidity: <span id="currentHumidity">100%</span>
+                </p>
                 <p>
-                  UV Index: <button class="btn btn-sm btn-success">0</button>
+                  UV Index:
+                  <button id="uvIndex" class="btn btn-sm btn-success">0</button>
                 </p>
               </div>
             </div>

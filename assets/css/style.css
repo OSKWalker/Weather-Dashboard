@@ -2,9 +2,13 @@
   color: #fff;
 }
 
+.mainContainer {
+  max-width: 1400px;
+}
 .btn {
   color: #fff;
   font-weight: bolder;
+  margin: 2px;
 }
 .b-example-divider {
   height: 3rem;
