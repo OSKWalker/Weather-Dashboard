@@ -38,14 +38,14 @@ function displaySavedLocations() {
 
 function createLocationButton(data) {
   let newLocation = {
-    locationName: data.list[0].name + ", " + data.list[0].sys.country,
-    icon: data.list[0].weather[0].icon,
-    description: data.list[0].weather[0].description,
-    temp: data.list[0].main.temp + "°F",
-    wind: data.list[0].wind.speed + " mi/h",
-    humidity: data.list[0].main.humidity + "%",
-    lat: data.list[0].coord.lat,
-    lon: data.list[0].coord.lon,
+    locationName: `${data.list[0].name}, ${data.list[0].sys.country}`,
+    icon: `${data.list[0].weather[0].icon}`,
+    description: `${data.list[0].weather[0].description}`,
+    temp: `${data.list[0].main.temp} °F`,
+    wind: `${data.list[0].wind.speed} mi/h`,
+    humidity: `${data.list[0].main.humidity}%`,
+    lat: `${data.list[0].coord.lat}`,
+    lon: `${data.list[0].coord.lon}`,
   };
   let listItem = document.createElement("li");
   let content = `<button data-location="${newLocation.locationName}" data-icon="${newLocation.icon}" data-description="${newLocation.description}" data-temp="${newLocation.temp}" data-wind="${newLocation.wind}" data-humidity="${newLocation.humidity}" data-latitude="${newLocation.lat}" data-longitude="${newLocation.lon}">${newLocation.locationName}</button>`;
@@ -64,14 +64,22 @@ function createLocationButton(data) {
 function updateContentPane(event) {
   event.preventDefault();
   const buttonClicked = event.target;
-  locationNameEl.html(
-    buttonClicked.getAttribute("data-location") +
-      " " +
-      moment().format("ddd, DD MMM YY, HH:mm:ss")
-  );
-  currentTempEl.html(buttonClicked.getAttribute("data-temp"));
-  currentWindEl.html(buttonClicked.getAttribute("data-wind"));
-  currentHumidityEl.html(buttonClicked.getAttribute("data-humidity"));
+  console.log(buttonClicked);
+  if (buttonClicked) {
+    locationNameEl.html(`${buttonClicked.getAttribute(
+      "data-location"
+    )} ${moment().format(
+      "ddd, DD MMM YY, HH:mm:ss"
+    )} <img src="${apiURL}img/w/${buttonClicked.getAttribute(
+      "data-icon"
+    )}.png" alt="${buttonClicked.getAttribute(
+      "data-description"
+    )}" class="weather-img"/>
+  `);
+    currentTempEl.html(buttonClicked.getAttribute("data-temp"));
+    currentWindEl.html(buttonClicked.getAttribute("data-wind"));
+    currentHumidityEl.html(buttonClicked.getAttribute("data-humidity"));
+  }
 }
 
 function setCurrentWeather(data) {
@@ -82,11 +90,9 @@ function setCurrentWeather(data) {
       data.list[0].weather[0].description
     }" class="weather-img"/>`
   );
-  currentWeatherIcon.html();
-  locationNameEl.append(currentWeatherIcon);
-  currentTempEl.html(`${data.list[0].main.temp}" °F`);
-  currentWindEl.html(`${data.list[0].wind.speed}" mi/h`);
-  currentHumidityEl.html(`${data.list[0].main.humidity}"%"`);
+  currentTempEl.html(`${data.list[0].main.temp} °F`);
+  currentWindEl.html(`${data.list[0].wind.speed} mi/h`);
+  currentHumidityEl.html(`${data.list[0].main.humidity}%`);
 }
 
 function storeLocationButton(newButton) {
@@ -138,14 +144,12 @@ function getLocation(event) {
 
   fetch(searchURL)
     .then(function (response) {
-      console.log(response);
       if (!response.ok) {
         return;
       }
       return response.json();
     })
     .then(function (data) {
-      console.log(data);
       if (!data || data.count === 0) {
         window.alert("Location not found!");
         return;
@@ -165,6 +169,7 @@ function clearLocations() {
   recentSearches = [];
   localStorage.clear();
 }
+
 function init() {
   setEventListeners();
   if (locationHistory.length > 0) {
