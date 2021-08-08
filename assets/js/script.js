@@ -73,16 +73,11 @@ function updateContentPane(event) {
 }
 
 function setCurrentWeather(data) {
-  locationNameEl.html(
-    data.list[0].name +
-      ", " +
-      data.list[0].sys.country +
-      " " +
-      moment().format("ddd, DD MMM YY, HH:mm:ss")
+  locationNameEl.html(`"${data.list[0].name}", "${data.list[0].sys.country}" "${moment().format("ddd, DD MMM YY, HH:mm:ss")}`
   );
-  currentTempEl.html(data.list[0].main.temp + "°F");
-  currentWindEl.html(data.list[0].wind.speed + " mi/h");
-  currentHumidityEl.html(data.list[0].main.humidity + "%");
+  currentTempEl.html(`${data.list[0].main.temp}" °F`);
+  currentWindEl.html(`${data.list[0].wind.speed}" mi/h`);
+  currentHumidityEl.html(`${data.list[0].main.humidity}"%"`);
 }
 
 function storeLocationButton(newButton) {
@@ -91,7 +86,6 @@ function storeLocationButton(newButton) {
   localStorage.setItem("locationButtons", JSON.stringify(recentButtons));
   recentButtons = JSON.parse(localStorage.getItem("locationButtons"));
   recentButtons = [...new Set(recentButtons)];
-  console.log("rb", recentButtons);
 }
 
 function storeSearch(location) {
@@ -101,7 +95,6 @@ function storeSearch(location) {
   localStorage.setItem("searchHistory", JSON.stringify(recentSearches));
   recentSearches = JSON.parse(localStorage.getItem("searchHistory"));
   recentSearches = [...new Set(recentSearches)];
-  console.log("rs", recentSearches);
 }
 
 function handleGoodFetch(data, location) {
