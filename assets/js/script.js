@@ -20,11 +20,12 @@ const storedLocationButtons =
 storedLocationButtons.splice(10);
 let recentButtons = [...new Set(storedLocationButtons)];
 
+/* Was using this to check for duplicate entries with varying degrees of success
 let duplicateLocation = function checkForDuplicate(search, location) {
   return search.some(function (loc) {
     return location.toLowerCase() === loc.toLowerCase();
   });
-};
+};*/
 
 function displaySavedLocations() {
   storedLocationButtons.forEach((element) => {
@@ -35,13 +36,23 @@ function displaySavedLocations() {
   });
 }
 
-function createLocationButton(location) {
+function createLocationButton(data) {
+  let newLocation = {
+    locationName: data.list[0].name + ", " + data.list[0].sys.country,
+    temp: data.list[0].main.temp + "°F",
+    wind: data.list[0].wind.speed + " mi/h",
+    humidity: data.list[0].main.humidity + "%",
+    lat: data.list[0].coord.lat,
+    lon: data.list[0].coord.lon,
+  };
   let listItem = document.createElement("li");
-  let content = `<button data-location="${location}">${
+  let content = `<button data-location="${newLocation.locationName}" data-temp="${newLocation.temp}" data-wind="${newLocation.wind}" data-humidity="${newLocation.humidity}" data-latitude="${newLocation.lat}" data-longitude="${newLocation.lon}">${newLocation.locationName}</button>`;
+  /*${
     location[0].toUpperCase() + location.substring(1)
-  }</button>`;
+  }*/
   listItem.setAttribute("class", "btn btn-success");
   listItem.innerHTML = content;
+
   if (!recentButtons.includes(content)) {
     searchHistoryEl.append(listItem);
     storeLocationButton(content);
@@ -51,7 +62,27 @@ function createLocationButton(location) {
 function updateContentPane(event) {
   event.preventDefault();
   const buttonClicked = event.target;
-  let location = buttonClicked.getAttribute("data-location");
+  locationNameEl.html(
+    buttonClicked.getAttribute("data-location") +
+      " " +
+      moment().format("ddd, DD MMM YY, HH:mm:ss")
+  );
+  currentTempEl.html(buttonClicked.getAttribute("data-temp"));
+  currentWindEl.html(buttonClicked.getAttribute("data-wind"));
+  currentHumidityEl.html(buttonClicked.getAttribute("data-humidity"));
+}
+
+function setCurrentWeather(data) {
+  locationNameEl.html(
+    data.list[0].name +
+      ", " +
+      data.list[0].sys.country +
+      " " +
+      moment().format("ddd, DD MMM YY, HH:mm:ss")
+  );
+  currentTempEl.html(data.list[0].main.temp + "°F");
+  currentWindEl.html(data.list[0].wind.speed + " mi/h");
+  currentHumidityEl.html(data.list[0].main.humidity + "%");
 }
 
 function storeLocationButton(newButton) {
@@ -73,28 +104,29 @@ function storeSearch(location) {
   console.log("rs", recentSearches);
 }
 
-function createLocationObject(data) {
-  let newLocation = {
-    locationName: data.list[0].name + ", " + data.list[0].sys.country,
-    currentTemp: data.list[0].main.temp + "°F",
-    wind: data.list[0].wind.speed + " mi/h",
-    humidity: data.list[0].main.humidity + "%",
-    lat: data.list[0].coord.lat,
-    lon: data.list[0].coord.lon,
-  };
-  locationObjects.push(JSON.stringify(newLocation));
-  recentObjects = [...new Set(locationObjects)];
-  localStorage.setItem("locationObject", recentObjects);
-}
-
 function handleGoodFetch(data, location) {
+  searchInputEl.val("");
   historyContainerEl.show();
   storeSearch(location);
-  createLocationButton(location);
-  /*
-  createLocationObject(data);*/
+  createLocationButton(data);
+  setCurrentWeather(data);
 
   // fetch 5-day forecast
+}
+
+function getForecast(latitude, longitude) { 
+    let searchURL = `${apiURL}data/2.5/onecall?lat=${latitude}&lon=${longitude}&units=imperial&exclude=minutely,hourly,alerts&appid=${appID}`;
+    fetch(searchURL).then(function (response) {
+      return response.json();
+    }).then(function (data) {
+        if (data.cod === "404" || data.count === 0) {
+          window.alert("This is not a valid location");
+          return;
+        } else {
+          handleGoodFetch(data, location.toLowerCase());
+        }
+      });
+  }
 }
 
 function getLocation(event) {
@@ -122,7 +154,7 @@ function getLocation(event) {
         window.alert("This is not a valid location");
         return;
       } else {
-        handleGoodFetch(data, location);
+        handleGoodFetch(data, location.toLowerCase());
       }
     });
 }
