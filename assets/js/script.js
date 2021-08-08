@@ -1,46 +1,50 @@
 // "/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid=";
 const apiURL = "https://api.openweathermap.org/";
 const appID = "d33c2ae08fb898222095f60271a74087";
-const searchHistoryEl = document.getElementById("searchHistory");
-const searchInputEl = document.getElementById("searchInput");
-const searchButtonEl = document.getElementById("searchButton");
-const clearButtonEl = document.getElementById("clearButton");
-const locationNameEl = document.getElementById("locationName");
-const currentDayEl = document.getElementById("currentDay");
-const currentTempEl = document.getElementById("currentTemp");
-const currentWindEl = document.getElementById("currentWindSpeed");
-const currentHumidityEl = document.getElementById("currentHumidity");
-const uvIndexEl = document.getElementById("uvIndex");
-const locationHistory = JSON.parse(localStorage.getItem("recentSearches"));
-const storedLocationButtons = JSON.parse(
-  localStorage.getItem("locationButtons")
-);
+const searchHistoryEl = $("#searchHistory");
+const searchInputEl = $("#searchInput");
+const searchButtonEl = $("#searchButton");
+const clearButtonEl = $("#clearButton");
+const locationNameEl = $("#locationName");
+const currentDayEl = $("#currentDay");
+const currentTempEl = $("#currentTemp");
+const currentWindEl = $("#currentWindSpeed");
+const currentHumidityEl = $("#currentHumidity");
+const uvIndexEl = $("#uvIndex");
+const historyContainerEl = $("#historyContainer");
+const locationHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
+locationHistory.splice(10);
+let recentSearches = [...new Set(locationHistory)];
+const storedLocationButtons =
+  JSON.parse(localStorage.getItem("locationButtons")) || [];
+storedLocationButtons.splice(10);
+let recentButtons = [...new Set(storedLocationButtons)];
+
+let duplicateLocation = function checkForDuplicate(search, location) {
+  return search.some(function (loc) {
+    return location.toLowerCase() === loc.toLowerCase();
+  });
+};
 
 function displaySavedLocations() {
-  if (locationHistory !== null) {
-    locationHistory.forEach((element) => {
-      console.log(storedLocationButtons);
-    });
-  }
+  storedLocationButtons.forEach((element) => {
+    let listItem = document.createElement("li");
+    listItem.setAttribute("class", "btn btn-warning");
+    listItem.innerHTML = element;
+    searchHistoryEl.append(listItem);
+  });
 }
 
 function createLocationButton(location) {
-  if (locationHistory !== null && !locationHistory.includes(location)) {
-    let duplicateLocation = function checkForDuplicate(searches, location) {
-      return searches.some(function (loc) {
-        return location.toLowerCase() === loc.toLowerCase();
-      });
-    };
-
-    if (!duplicateLocation(locationHistory, location)) {
-      let listItem = document.createElement("li");
-      let content = `<button data-location="${location}">${
-        location[0].toUpperCase() + location.substring(1)
-      }</button>`;
-      listItem.innerHTML = content;
-      searchHistoryEl.appendChild(listItem);
-      storeLocationButton(content);
-    }
+  let listItem = document.createElement("li");
+  let content = `<button data-location="${location}">${
+    location[0].toUpperCase() + location.substring(1)
+  }</button>`;
+  listItem.setAttribute("class", "btn btn-success");
+  listItem.innerHTML = content;
+  if (!recentButtons.includes(content)) {
+    searchHistoryEl.append(listItem);
+    storeLocationButton(content);
   }
 }
 
@@ -51,24 +55,25 @@ function updateContentPane(event) {
 }
 
 function storeLocationButton(newButton) {
-  let locationButtons = [];
-  let recentButtons = [];
-  locationButtons.push(newButton);
-  recentButtons = [...new Set(locationButtons)];
+  storedLocationButtons.push(newButton);
+  recentButtons = [...new Set(storedLocationButtons)];
   localStorage.setItem("locationButtons", JSON.stringify(recentButtons));
+  recentButtons = JSON.parse(localStorage.getItem("locationButtons"));
+  recentButtons = [...new Set(recentButtons)];
+  console.log("rb", recentButtons);
 }
 
 function storeSearch(location) {
-  let locationSearch = [];
-  let recentSearches = [];
-  locationSearch.push(location.toLowerCase());
-  recentSearches = [...new Set(locationSearch)];
-  localStorage.setItem("recentSearches", JSON.stringify(recentSearches));
+  locationHistory.push(location);
+  locationHistory.splice(10);
+  recentSearches = [...new Set(locationHistory)];
+  localStorage.setItem("searchHistory", JSON.stringify(recentSearches));
+  recentSearches = JSON.parse(localStorage.getItem("searchHistory"));
+  recentSearches = [...new Set(recentSearches)];
+  console.log("rs", recentSearches);
 }
 
 function createLocationObject(data) {
-  let locationObjects = [];
-  let recentObjects = [];
   let newLocation = {
     locationName: data.list[0].name + ", " + data.list[0].sys.country,
     currentTemp: data.list[0].main.temp + "°F",
@@ -79,37 +84,42 @@ function createLocationObject(data) {
   };
   locationObjects.push(JSON.stringify(newLocation));
   recentObjects = [...new Set(locationObjects)];
-  localStorage.setItem("locationObjects", recentObjects);
+  localStorage.setItem("locationObject", recentObjects);
 }
 
 function handleGoodFetch(data, location) {
+  historyContainerEl.show();
   storeSearch(location);
   createLocationButton(location);
-  createLocationObject(data);
+  /*
+  createLocationObject(data);*/
 
   // fetch 5-day forecast
 }
 
 function getLocation(event) {
   event.preventDefault();
-  let location = searchInputEl.value.toLowerCase();
+  let location = searchInputEl.val();
   let searchURL;
-  if (location === "") {
+  if (!location) {
+    window.alert("Please enter a location");
     return;
   } else {
     searchURL = `${apiURL}data/2.5/find?q=${location}&units=imperial&exclude=minutely,hourly,daily,alerts&appid=${appID}`;
   }
+
   fetch(searchURL)
     .then(function (response) {
       if (!response.ok) {
         window.alert("No Location Found!");
         return;
+      } else {
+        return response.json();
       }
-      return response.json();
     })
     .then(function (data) {
-      if (data.count === 0) {
-        window.alert("This is not a valid location!");
+      if (data.cod === "404" || data.count === 0) {
+        window.alert("This is not a valid location");
         return;
       } else {
         handleGoodFetch(data, location);
@@ -117,20 +127,22 @@ function getLocation(event) {
     });
 }
 
+function setEventListeners() {
+  searchButtonEl.on("click", getLocation);
+  clearButtonEl.on("click", clearLocations);
+  searchHistoryEl.on("click", updateContentPane);
+}
+
 function clearLocations() {
   recentSearches = [];
   localStorage.clear();
 }
-function setEventListeners() {
-  searchButtonEl.addEventListener("click", getLocation);
-  clearButtonEl.addEventListener("click", clearLocations);
-  searchHistoryEl.addEventListener("click", updateContentPane);
-}
-
 function init() {
   setEventListeners();
-  if (locationHistory !== null) {
+  if (locationHistory.length > 0) {
     displaySavedLocations();
+  } else {
+    historyContainerEl.hide();
   }
 }
 
