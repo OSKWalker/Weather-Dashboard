@@ -64,8 +64,7 @@ function createLocationButton(data) {
 function updateContentPane(event) {
   event.preventDefault();
   const buttonClicked = event.target;
-  console.log(buttonClicked);
-  if (buttonClicked) {
+  if (buttonClicked.matches("button")) {
     locationNameEl.html(`${buttonClicked.getAttribute(
       "data-location"
     )} ${moment().format(
