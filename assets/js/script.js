@@ -39,6 +39,8 @@ function displaySavedLocations() {
 function createLocationButton(data) {
   let newLocation = {
     locationName: data.list[0].name + ", " + data.list[0].sys.country,
+    icon: data.list[0].weather[0].icon,
+    description: data.list[0].weather[0].description,
     temp: data.list[0].main.temp + "°F",
     wind: data.list[0].wind.speed + " mi/h",
     humidity: data.list[0].main.humidity + "%",
@@ -46,7 +48,7 @@ function createLocationButton(data) {
     lon: data.list[0].coord.lon,
   };
   let listItem = document.createElement("li");
-  let content = `<button data-location="${newLocation.locationName}" data-temp="${newLocation.temp}" data-wind="${newLocation.wind}" data-humidity="${newLocation.humidity}" data-latitude="${newLocation.lat}" data-longitude="${newLocation.lon}">${newLocation.locationName}</button>`;
+  let content = `<button data-location="${newLocation.locationName}" data-icon="${newLocation.icon}" data-description="${newLocation.description}" data-temp="${newLocation.temp}" data-wind="${newLocation.wind}" data-humidity="${newLocation.humidity}" data-latitude="${newLocation.lat}" data-longitude="${newLocation.lon}">${newLocation.locationName}</button>`;
   /*${
     location[0].toUpperCase() + location.substring(1)
   }*/
@@ -73,8 +75,15 @@ function updateContentPane(event) {
 }
 
 function setCurrentWeather(data) {
-  locationNameEl.html(`"${data.list[0].name}", "${data.list[0].sys.country}" "${moment().format("ddd, DD MMM YY, HH:mm:ss")}`
+  locationNameEl.html(
+    `${data.list[0].name}, ${data.list[0].sys.country} ${moment().format(
+      "ddd, DD MMM YY, HH:mm:ss"
+    )}  <img src="${apiURL}img/w/${data.list[0].weather[0].icon}.png" alt="${
+      data.list[0].weather[0].description
+    }" class="weather-img"/>`
   );
+  currentWeatherIcon.html();
+  locationNameEl.append(currentWeatherIcon);
   currentTempEl.html(`${data.list[0].main.temp}" °F`);
   currentWindEl.html(`${data.list[0].wind.speed}" mi/h`);
   currentHumidityEl.html(`${data.list[0].main.humidity}"%"`);
@@ -107,19 +116,13 @@ function handleGoodFetch(data, location) {
   // fetch 5-day forecast
 }
 
-function getForecast(latitude, longitude) { 
-    let searchURL = `${apiURL}data/2.5/onecall?lat=${latitude}&lon=${longitude}&units=imperial&exclude=minutely,hourly,alerts&appid=${appID}`;
-    fetch(searchURL).then(function (response) {
+function getForecast(latitude, longitude) {
+  let searchURL = `${apiURL}data/2.5/onecall?lat=${latitude}&lon=${longitude}&units=imperial&exclude=minutely,hourly,alerts&appid=${appID}`;
+  fetch(searchURL)
+    .then(function (response) {
       return response.json();
-    }).then(function (data) {
-        if (data.cod === "404" || data.count === 0) {
-          window.alert("This is not a valid location");
-          return;
-        } else {
-          handleGoodFetch(data, location.toLowerCase());
-        }
-      });
-  }
+    })
+    .then(function (data) {});
 }
 
 function getLocation(event) {
@@ -130,21 +133,21 @@ function getLocation(event) {
     window.alert("Please enter a location");
     return;
   } else {
-    searchURL = `${apiURL}data/2.5/find?q=${location}&units=imperial&exclude=minutely,hourly,daily,alerts&appid=${appID}`;
+    searchURL = `${apiURL}data/2.5/find?q=${location}&units=imperial&appid=${appID}`;
   }
 
   fetch(searchURL)
     .then(function (response) {
+      console.log(response);
       if (!response.ok) {
-        window.alert("No Location Found!");
         return;
-      } else {
-        return response.json();
       }
+      return response.json();
     })
     .then(function (data) {
-      if (data.cod === "404" || data.count === 0) {
-        window.alert("This is not a valid location");
+      console.log(data);
+      if (!data || data.count === 0) {
+        window.alert("Location not found!");
         return;
       } else {
         handleGoodFetch(data, location.toLowerCase());
