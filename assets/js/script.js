@@ -128,8 +128,6 @@ function handleGoodFetch(data, location) {
   createLocationButton(data);
   setCurrentWeather(data);
   getForecast(data.list[0].coord.lat, data.list[0].coord.lon);
-
-  // fetch 5-day forecast
 }
 
 function displayForecast(forecast) {
@@ -178,10 +176,36 @@ function getForecast(latitude, longitude) {
       return response.json();
     })
     .then(function (data) {
-      console.log(data);
-      uvIndexEl.html(data.current.uvi);
+      uvIndexEl.html(
+        `<span id="${setIndexColor(data.current.uvi)}">${
+          data.current.uvi
+        }</span>`
+      );
       setForecastDays(data);
     });
+}
+
+function setIndexColor(index) {
+  let solar = {
+    low: [0, 1, 2],
+    mod: [3, 4, 5],
+    high: [6, 7],
+    veryhigh: [8, 9, 10],
+  };
+  let test = Math.floor(index);
+  let indexCondition;
+  for (const [condition, values] of Object.entries(solar)) {
+    for (let i = 0; i < values.length; i++) {
+      if (values[i] === test) {
+        indexCondition = condition;
+      }
+    }
+  }
+  if (test < 11) {
+    return indexCondition;
+  } else {
+    return "extreme";
+  }
 }
 
 function getLocation(event) {
