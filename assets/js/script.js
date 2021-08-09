@@ -13,6 +13,7 @@ const currentHumidityEl = $("#currentHumidity");
 const uvIndexEl = $("#uvIndex");
 const historyContainerEl = $("#historyContainer");
 const forecastEl = $("#forecast");
+const forecastCardsEl = $("#forecastCards");
 const locationHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
 locationHistory.splice(10);
 let recentSearches = [...new Set(locationHistory)];
@@ -132,9 +133,10 @@ function handleGoodFetch(data, location) {
 }
 
 function displayForecast(forecast) {
-  console.log(forecast);
+  if (forecastCardsEl.children()) {
+    forecastCardsEl.children().remove();
+  }
   forecast.forEach((element) => {
-    console.log(element);
     let forecastCard = `<div class="col-md forecast-card">
               <div class="card bg-dark h-100 text-light">
                 <h3>${element.name} <img class="weather-img" src="${apiURL}img/w/${element.icon}.png" alt="${element.description}"/></h3>
@@ -149,7 +151,7 @@ function displayForecast(forecast) {
                 </dl>
               </div>
             </div>`;
-    forecastEl.append(forecastCard);
+    forecastCardsEl.append(forecastCard);
   });
 }
 
