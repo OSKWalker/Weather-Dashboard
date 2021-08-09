@@ -12,6 +12,7 @@ const currentWindEl = $("#currentWindSpeed");
 const currentHumidityEl = $("#currentHumidity");
 const uvIndexEl = $("#uvIndex");
 const historyContainerEl = $("#historyContainer");
+const forecastEl = $("#forecast");
 const locationHistory = JSON.parse(localStorage.getItem("searchHistory")) || [];
 locationHistory.splice(10);
 let recentSearches = [...new Set(locationHistory)];
@@ -28,6 +29,8 @@ let duplicateLocation = function checkForDuplicate(search, location) {
 };*/
 
 function displaySavedLocations() {
+  currentDayEl.show();
+  forecastEl.show();
   storedLocationButtons.forEach((element) => {
     let listItem = document.createElement("li");
     listItem.setAttribute("class", "btn btn-warning");
@@ -78,6 +81,10 @@ function updateContentPane(event) {
     currentTempEl.html(buttonClicked.getAttribute("data-temp"));
     currentWindEl.html(buttonClicked.getAttribute("data-wind"));
     currentHumidityEl.html(buttonClicked.getAttribute("data-humidity"));
+    getForecast(
+      buttonClicked.getAttribute("data-latitude"),
+      buttonClicked.getAttribute("data-longitude")
+    );
   }
 }
 
@@ -114,11 +121,52 @@ function storeSearch(location) {
 function handleGoodFetch(data, location) {
   searchInputEl.val("");
   historyContainerEl.show();
+  currentDayEl.show();
+  forecastEl.show();
   storeSearch(location);
   createLocationButton(data);
   setCurrentWeather(data);
+  getForecast(data.list[0].coord.lat, data.list[0].coord.lon);
 
   // fetch 5-day forecast
+}
+
+function displayForecast(forecast) {
+  console.log(forecast);
+  forecast.forEach((element) => {
+    console.log(element);
+    let forecastCard = `<div class="col-md forecast-card">
+              <div class="card bg-dark h-100 text-light">
+                <h3>${element.name} <img class="weather-img" src="${apiURL}img/w/${element.icon}.png" alt="${element.description}"/></h3>
+                <h5>${element.date}<h5>
+                <dl>
+                  <dt>Temp:</dt>
+                  <dd>${element.temp} °F</dd>
+                  <dt>Wind:</dt>
+                  <dd>${element.wind} mi/h</dd>
+                  <dt>Humidity:</dt>
+                  <dd>${element.humidity}%</dd>
+                </dl>
+              </div>
+            </div>`;
+    forecastEl.append(forecastCard);
+  });
+}
+
+function setForecastDays(data) {
+  let forecastSet = [];
+  for (let i = 1; i < 6; i++) {
+    let day = {};
+    day.name = moment.unix(data.daily[i].dt).format("dddd");
+    day.date = moment.unix(data.daily[i].dt).format("DD MMM YY");
+    day.icon = data.daily[i].weather[0].icon;
+    day.description = data.daily[i].weather[0].description;
+    day.temp = data.daily[i].temp.max;
+    day.wind = data.daily[i].wind_speed;
+    day.humidity = data.daily[i].humidity;
+    forecastSet.push(day);
+  }
+  displayForecast(forecastSet);
 }
 
 function getForecast(latitude, longitude) {
@@ -127,7 +175,11 @@ function getForecast(latitude, longitude) {
     .then(function (response) {
       return response.json();
     })
-    .then(function (data) {});
+    .then(function (data) {
+      console.log(data);
+      uvIndexEl.html(data.current.uvi);
+      setForecastDays(data);
+    });
 }
 
 function getLocation(event) {
@@ -153,6 +205,7 @@ function getLocation(event) {
         window.alert("Location not found!");
         return;
       } else {
+        currentDayEl.show();
         handleGoodFetch(data, location.toLowerCase());
       }
     });
@@ -174,7 +227,9 @@ function init() {
   if (locationHistory.length > 0) {
     displaySavedLocations();
   } else {
-    historyContainerEl.hide();
+    historyContainerEl.toggle();
+    currentDayEl.toggle();
+    forecastEl.toggle();
   }
 }
 
