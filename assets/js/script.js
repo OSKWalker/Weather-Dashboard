@@ -34,7 +34,7 @@ function displaySavedLocations() {
   forecastEl.show();
   storedLocationButtons.forEach((element) => {
     let listItem = document.createElement("li");
-    listItem.setAttribute("class", "btn btn-warning");
+    listItem.setAttribute("class", "btn btn-info");
     listItem.innerHTML = element;
     searchHistoryEl.append(listItem);
   });
@@ -56,7 +56,7 @@ function createLocationButton(data) {
   /*${
     location[0].toUpperCase() + location.substring(1)
   }*/
-  listItem.setAttribute("class", "btn btn-success");
+  listItem.setAttribute("class", "btn btn-primary locationButton");
   listItem.innerHTML = content;
 
   if (!recentButtons.includes(content)) {
@@ -135,8 +135,8 @@ function displayForecast(forecast) {
     forecastCardsEl.children().remove();
   }
   forecast.forEach((element) => {
-    let forecastCard = `<div class="col-md forecast-card">
-              <div class="card bg-dark h-100 text-light">
+    let forecastCard = `<div class="col-md forecastCard">
+              <div class="h-100 text-light">
                 <h3>${element.name} <img class="weather-img" src="${apiURL}img/w/${element.icon}.png" alt="${element.description}"/></h3>
                 <h5>${element.date}<h5>
                 <dl>

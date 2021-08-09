@@ -14,7 +14,7 @@ Should the user need to see the weather outlook for multiple cities in order to 
 >
 > > - see the city name, date, an icon representing the current weather conditions as well as the current temperature, humidity, wind speed, and the UV index.
 >
-> > - gauge the UV index condition based on a color-coded system: (LOW: 0-2, MODERATE: 3-5, HIGH: 6-7, VERY HIGH: 8-10, EXTREME: 11+).
+> > - gauge the UV index condition based on a color-coded system: [LOW: 0-2 (GREEN), MODERATE: 3-5 (YELLOW), HIGH: 6-7 (ORANGE), VERY HIGH: 8-10 (RED), EXTREME: 11+ (MAGENTA)].
 >
 > > - see a forecast of up to 5 days showing the same information for those days (minus the UV Index).
 >

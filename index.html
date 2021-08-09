@@ -26,23 +26,16 @@
   </head>
   <body>
     <header
-      class="
-        container-fluid
-        bg-dark
-        text-light text-center
-        mb-5
-        p-2
-        weather-header
-      "
+      class="container-fluid text-light text-center mb-5 p-2 weather-header"
     >
       <div class="d-flex align-content-center justify-content-center">
         <h1 class="">Weather Dashboard</h1>
       </div>
     </header>
-    <div id="mainContainer" class="container-fluid bg-dark text-light">
+    <div id="mainContainer" class="container-fluid text-light">
       <div class="row">
         <aside class="col-lg-3 pb-3">
-          <h1 id="form-heading" class="mt-1 h3 form-label">
+          <h1 id="formHeading" class="d-flex mt-1 h3 form-label">
             Search for a Location:
           </h1>
           <form id="searchForm" class="form w-100 me-3">
@@ -92,7 +85,7 @@
             role="region"
             aria-live="polite"
           >
-            <div class="card">
+            <div id="currentWeather" class="jumbotron">
               <div class="card-body">
                 <h2 id="locationName" class="h3 card-title"></h2>
                 <p class="card-text">Temp: <span id="currentTemp"></span></p>
@@ -117,7 +110,7 @@
             aria-live="polite"
           >
             <div class="col-12"><h4>5-DAY FORECAST:</h4></div>
-            <div id="forecastCards" class="d-flex"></div>
+            <div id="forecastCards" class="forecastCards"></div>
           </section>
         </div>
       </div>

@@ -1,3 +1,59 @@
+/* Color scheme*/
+:root {
+  --darkest: black;
+  --darker: rgb(9, 9, 73);
+  --dark: blue;
+  --medium: cornflowerblue;
+  --light: lightblue;
+  --lighter: silver;
+  --lightest: ivory;
+}
+
+/* Content highlight and background colors*/
+::selection {
+  background-color: var(--lighter);
+  color: var(--darkest);
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background-color: var(--darkest);
+  color: var(--lightest);
+}
+
+body {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-variant: small-caps;
+  font-size: 1.8rem;
+  line-height: 1;
+  background-image: url("../images/blurry_blue_background_ii-t2.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+#formHeading {
+  justify-content: left;
+}
+
+#currentWeather,
+.forecastCard {
+  background-image: url("../images/OIP.jpg");
+  background-size: cover;
+}
+
+.forecastCard {
+  margin: 5px;
+}
+.weather-header {
+  background-image: url("../images/OIP-2.jpg");
+  background-position: center;
+  background-size: auto;
+  border-bottom: 5px solid cornflowerblue;
+  background-color: darkblue;
+}
 .align-items-center h1 {
   color: #fff;
 }
@@ -30,7 +86,20 @@
   border-color: #fff;
   box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
 }
+.form-label {
+  background-color: var(--darker);
+  border-radius: 0.3rem;
+}
 
+#historyContainer {
+  justify-content: space-evenly;
+  flex-flow: row wrap;
+}
+
+.locationButton {
+  width: 100%
+  flex: 100% 0 0;
+}
 .bi {
   vertical-align: -0.125em;
   fill: currentColor;
@@ -66,9 +135,7 @@ h1 {
 }
 
 .card {
-  /*flex: 1 0 0;*/
   padding: 5px;
-  /*text-align: center;*/
   border-style: solid;
   border-width: 1px;
   width: 200px;
@@ -85,10 +152,9 @@ h1 {
 
 .card img {
   width: 35%;
-  /* min-width: 100px;*/
 }
 
-.city-weather-future {
+.forecastCards {
   display: inline-flex;
   padding: 5px;
 }
